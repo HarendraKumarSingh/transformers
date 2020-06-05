@@ -114,17 +114,23 @@ class LineByLineTextDataset(Dataset):
             lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
 
         logger.info("Running tokenization")
-#         self.examples = tokenizer.encode_batch(lines)
+        self.examples = tokenizer.encode_batch(lines)
         # -------------------------- CHANGES END
-        with open(file_path, encoding="utf-8") as f:
-            lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
+#         with open(file_path, encoding="utf-8") as f:
+#             lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
 
-        batch_encoding = tokenizer.batch_encode_plus(lines, add_special_tokens=True, max_length=block_size)
-        self.examples = batch_encoding["input_ids"]
+#         batch_encoding = tokenizer.batch_encode_plus(lines, add_special_tokens=True, max_length=block_size)
+#         self.examples = batch_encoding["input_ids"]
         
 
+#     def __len__(self):
+#         return len(self.examples)
+
+#     def __getitem__(self, i) -> torch.Tensor:
+#         return torch.tensor(self.examples[i], dtype=torch.long)
+    
     def __len__(self):
         return len(self.examples)
 
-    def __getitem__(self, i) -> torch.Tensor:
-        return torch.tensor(self.examples[i], dtype=torch.long)
+    def __getitem__(self, i):
+        return torch.tensor(self.examples[i].ids, dtype=torch.long)
