@@ -87,12 +87,6 @@ class LineByLineTextDataset(Dataset):
         # that we will soon use fast multithreaded tokenizers from the
         # `tokenizers` repo everywhere =)
         logger.info("Creating features from dataset file at %s", file_path)
-
-        # with open(file_path, encoding="utf-8") as f:
-        #     lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
-
-        # batch_encoding = tokenizer.batch_encode_plus(lines, add_special_tokens=True, max_length=block_size)
-        # self.examples = batch_encoding["input_ids"]
         # -------------------------- CHANGES START
         bert_tokenizer = os.path.join(tokenizer_path, "vocab.txt")
         if os.path.exists(bert_tokenizer):
@@ -120,8 +114,14 @@ class LineByLineTextDataset(Dataset):
             lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
 
         logger.info("Running tokenization")
-        self.examples = tokenizer.encode_batch(lines)
+#         self.examples = tokenizer.encode_batch(lines)
         # -------------------------- CHANGES END
+        with open(file_path, encoding="utf-8") as f:
+            lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
+
+        batch_encoding = tokenizer.batch_encode_plus(lines, add_special_tokens=True, max_length=block_size)
+        self.examples = batch_encoding["input_ids"]
+        
 
     def __len__(self):
         return len(self.examples)
